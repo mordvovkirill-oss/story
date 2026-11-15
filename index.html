@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Наша история</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: one narrow column, like a page of a small book. One step on screen at a time. */
+  color-scheme: light;
+  --paper: #eef0f3;
+  --card: #ffffff;
+  --ink: #1b1d23;
+  --muted: #666b75;
+  --line: #d6d9df;
+  --wine: #8a2846;
+  --wine-soft: #f4e4ea;
+  --todo: #ffe680;
+  --display: "Cormorant Garamond", "Times New Roman", serif;
+  --body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+.page {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 28px 18px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-height: 100dvh;
+}
+header { display: flex; flex-direction: column; gap: 12px; }
+.brand {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: transparent;
+}
+.chip.now { border-color: var(--wine); color: var(--wine); background: var(--wine-soft); }
+.chip.done { color: var(--ink); border-color: var(--ink); }
+main {
+  background: var(--card);
+  border-radius: 6px;
+  padding: 26px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 0 var(--line), 0 14px 30px -22px rgba(27, 29, 35, 0.45);
+}
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wine);
+  margin: 0;
+}
+h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; }
+.soft { color: var(--muted); font-size: 15px; }
+.quote {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 25px;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.todo {
+  background: var(--todo);
+  padding: 1px 5px;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+.btn {
+  align-self: flex-start;
+  background: var(--wine);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 12px 22px;
+  font-weight: 600;
+  font-size: 16px;
+}
+.btn:active { transform: translateY(1px); }
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  font-weight: 500;
+  padding: 9px 14px;
+  font-size: 14px;
+}
+button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* puzzle */
+.board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--paper);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.tile {
+  position: absolute;
+  width: 33.3334%;
+  height: 33.3334%;
+  padding: 0;
+  border: 1.5px solid var(--card);
+  border-radius: 3px;
+  background-image: url("photo.jpg");
+  background-size: 300% 300%;
+  transition: left 0.16s ease, top 0.16s ease;
+}
+.tile span {
+  display: none;
+  position: absolute;
+  left: 6px; top: 6px;
+  min-width: 24px; height: 24px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+}
+.board.nums .tile span { display: block; }
+.photo { width: 100%; border-radius: 4px; display: block; }
+.count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* questions */
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+.opt.wrong { border-color: var(--line); color: var(--muted); text-decoration: line-through; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 14px; color: var(--muted); }
+input[type="text"] {
+  font: inherit;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--ink);
+}
+.msg { font-size: 15px; color: var(--wine); min-height: 1.55em; }
+.shake { animation: shake 0.3s; }
+@keyframes shake {
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile { transition: none; }
+  .shake { animation: none; }
+}
+.letter { white-space: pre-line; }
+.az { display: flex; flex-direction: column; }
+.az-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); }
+.az-n { font-size: 14px; color: var(--muted); }
+.btn.ghost.az-rec { background: var(--wine); border-color: var(--wine); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--muted);
+}
+.mark { background: none; border: 0; padding: 6px 0; color: var(--muted); font-size: 13px; }
+.author {
+  border: 1px dashed var(--muted);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1 class="brand">Наша история</h1>
+    <div class="steps" id="chips"></div>
+  </header>
+  <main id="view"></main>
+  <footer>
+    <div id="authorBox"></div>
+    <button class="mark" id="mark" type="button" aria-label="К. для К.">К. для К.</button>
+  </footer>
+</div>
+
+<script>
+/* ================== НАСТРОЙКИ: всё, что меняется, лежит здесь ================== */
+var CONFIG = {
+  // время открытия глав, по Москве
+  open: {
+    1: Date.UTC(2026, 10, 20, 16, 0),  // 20 ноября 19:00 МСК
+    2: Date.UTC(2026, 10, 21, 9, 0),   // 21 ноября 12:00 МСК
+    3: Date.UTC(2026, 10, 22, 16, 0)   // 22 ноября 19:00 МСК
+  },
+  openText: { 1: "20 ноября в 19:00", 2: "21 ноября в 12:00", 3: "22 ноября в 19:00" },
+  photoCaption: "Я уже скучаю по тебе, Катя.",
+  firstMessage: ["18072015", "180715"],
+  clue1: "ПОДСКАЗКА К ПЕРВОМУ ТАЙНИКУ (место придумает Кирилл)",
+  code1: "ИЮЛЬ",
+  clue2: "ПОДСКАЗКА КО ВТОРОМУ ТАЙНИКУ (место придумает Кирилл)",
+  code2: "АВГУСТ",
+  years: "5",
+  apozh: {
+    src: "clip.mp3",          // фрагмент песни в обычном виде, сайт сам его переворачивает
+    cuts: [4, 9, 13],         // границы частей в секундах от начала фрагмента (в обычном, не перевёрнутом виде)
+    answers: ["ОКОЛОТЕБЯ"],   // без пробелов, заглавными
+    hint: "Подсказка: это поёт Ёлка."
+  },
+  letter: "ПИСЬМО КИРИЛЛА (текст напишет сам)",
+  giftPlace: "ГДЕ ЛЕЖИТ ПОДАРОК (место придумает Кирилл)"
+};
+/* ================================================================================ */
+
+var KEY = "nasha-istoriya-v1";
+var state = { step: 0 };
+var author = false;
+try {
+  var saved = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (saved && typeof saved.step === "number") state = saved;
+} catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+var view = document.getElementById("view");
+function h(html) { view.innerHTML = html; }
+function $(id) { return document.getElementById(id); }
+function norm(s) { return String(s).toUpperCase().replace(/Ё/g, "Е").replace(/\s+/g, "").trim(); }
+function isOpen(ch) { return author || Date.now() >= CONFIG.open[ch]; }
+function go(n) { state.step = n; save(); render(); window.scrollTo(0, 0); }
+function next() { go(state.step + 1); }
+function todo(t) { return '<span class="todo">' + t + "</span>"; }
+function nope(el, msgEl, text) {
+  el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake");
+  if (msgEl) msgEl.textContent = text;
+}
+
+/* ---------- шаги ---------- */
+var STEPS = [];
+function step(ch, fn) { STEPS.push({ ch: ch, fn: fn }); }
+
+/* Глава 1 */
+step(1, function () {
+  if (!isOpen(1)) {
+    h('<p class="eyebrow">Скоро</p><h2>История начнётся ' + CONFIG.openText[1] + '</h2>' +
+      '<p>Катя, я кое-что для тебя приготовил. Загляни сюда вечером, когда я уже буду в дороге.</p>');
+    return;
+  }
+  h('<p class="eyebrow">Глава 1</p><h2>Как всё началось</h2>' +
+    '<p>Катя, пока я катаюсь, у тебя есть своё приключение. Оно про нас двоих, займёт пару вечеров, и в конце тебя кое-что ждёт.</p>' +
+    '<p>Начнём с простого: собери одну фотографию.</p>' +
+    '<button class="btn" id="go" type="button">Начать</button>');
+  $("go").onclick = next;
+});
+
+step(1, function () { puzzle(); });
+
+step(1, function () {
+  h('<p class="eyebrow">Глава 1</p>' +
+    '<img class="photo" src="photo.jpg" alt="Мы вдвоём с бокалами шампанского">' +
+    '<p class="quote">' + CONFIG.photoCaption + '</p>' +
+    '<button class="btn" id="go" type="button">Дальше</button>');
+  $("go").onclick = next;
+});
+
+step(1, function () {
+  choice({
+    eyebrow: "Глава 1",
+    q: "Где я увидел тебя в первый раз?",
+    opts: ["В университете", "На свадьбе моего одногруппника", "ВКонтакте, в рекомендациях", "В гостях у общих друзей"],
+    right: 1,
+    wrong: "Не там. Вспомни, кто в тот день был в белом.",
+    after: "А потом оказалось, что жених приходится тебе двоюродным братом. Лучший повод сходить на чужую свадьбу."
+  });
+});
+
+step(1, function () {
+  h('<p class="eyebrow">Глава 1</p><h2>Какого числа я написал тебе первое сообщение?</h2>' +
+    '<p class="soft">Если не помнишь, переписка ВКонтакте всё хранит.</p>' +
+    '<div class="field"><label for="date">Дата, например 01.02.2015</label>' +
+    '<input type="text" id="date" inputmode="numeric" autocomplete="off" placeholder="ДД.ММ.ГГГГ"></div>' +
+    '<p class="msg" id="msg"></p>' +
+    '<button class="btn" id="go" type="button">Проверить</button>');
+  $("go").onclick = function () {
+    var v = $("date").value.replace(/\D/g, "");
+    if (CONFIG.firstMessage.indexOf(v) >= 0) next();
+    else nope($("date"), $("msg"), "Не тот день. Пролистай переписку в самое начало.");
+  };
+});
+
+step(1, function () {
+  code({
+    eyebrow: "Глава 1",
+    title: "18 июля 2015 года",
+    text: "С этого сообщения всё и пошло. А теперь оторвись от телефона: в квартире спрятана записка.",
+    clue: CONFIG.clue1,
+    label: "Слово из записки",
+    answer: CONFIG.code1
+  });
+});
+
+/* Глава 2 */
+step(2, function () {
+  if (!isOpen(2)) {
+    h('<p class="eyebrow">Глава 1 пройдена</p><h2>На сегодня всё</h2>' +
+      '<p>Записку сохрани, слово из неё ещё пригодится. Вторая глава откроется ' + CONFIG.openText[2] + '.</p>' +
+      '<p class="quote">Спокойной ночи, родная.</p>');
+    return;
+  }
+  h('<p class="eyebrow">Глава 2</p><h2>Наш дом</h2>' +
+    '<p>Вчера было про начало. Сегодня про то, что мы успели построить вместе. Несколько вопросов, на которые знаешь ответ только ты.</p>' +
+    '<button class="btn" id="go" type="button">Поехали</button>');
+  $("go").onclick = next;
+});
+
+step(2, function () {
+  choice({
+    eyebrow: "Глава 2",
+    q: "В какой день мы поженились?",
+    opts: ["18.08.2020", "08.08.2019", "08.08.2020", "20.08.2020"],
+    right: 2,
+    wrong: "Мне повезло, что это вижу только я. Попробуй ещё.",
+    after: "Восьмое августа двадцатого. Две восьмёрки подряд, чтобы я точно не забыл."
+  });
+});
+
+step(2, function () { apozh(); });
+
+step(2, function () {
+  code({
+    eyebrow: "Глава 2",
+    title: "Ты всё про нас помнишь",
+    text: "За это полагается награда. Она уже ждёт тебя дома.",
+    clue: CONFIG.clue2,
+    label: "Слово с открытки",
+    answer: CONFIG.code2
+  });
+});
+
+/* Ложный финал и глава 3 */
+step(3, function () {
+  if (!isOpen(3)) {
+    h('<p class="eyebrow">Конец</p><h2>Вот и вся история</h2>' +
+      '<p>Надеюсь, тебе понравилось. ' + todo("ПАРА СЛОВ ПРО ЛОЖНЫЙ ПОДАРОК") + '</p>' +
+      '<p class="quote">Люблю тебя. Вернусь двадцать четвёртого.</p>');
+    return;
+  }
+  h('<p class="eyebrow">Глава 3</p><h2>Постой. Это ещё не всё</h2>' +
+    '<p>Ты же не думала, что я уехал на пять дней и оставил тебе только это? У истории есть третья глава. Она про то, что впереди.</p>' +
+    '<button class="btn" id="go" type="button">Открыть</button>');
+  $("go").onclick = next;
+});
+
+step(3, function () {
+  h('<p class="eyebrow">Глава 3</p><h2>Замок из трёх частей</h2>' +
+    '<p>Два слова у тебя уже есть: одно из записки, второе с открытки. Третью часть посчитай сама.</p>' +
+    '<div class="field"><label for="w1">Слово из первой записки</label><input type="text" id="w1" autocomplete="off"></div>' +
+    '<div class="field"><label for="w2">Слово с открытки</label><input type="text" id="w2" autocomplete="off"></div>' +
+    '<div class="field"><label for="w3">Сколько полных лет прошло от первого сообщения до свадьбы?</label><input type="text" id="w3" inputmode="numeric" autocomplete="off"></div>' +
+    '<p class="msg" id="msg"></p>' +
+    '<button class="btn" id="go" type="button">Открыть замок</button>');
+  $("go").onclick = function () {
+    var bad = null;
+    if (norm($("w1").value) !== norm(CONFIG.code1)) bad = $("w1");
+    else if (norm($("w2").value) !== norm(CONFIG.code2)) bad = $("w2");
+    else if (norm($("w3").value) !== CONFIG.years) bad = $("w3");
+    if (bad) nope(bad, $("msg"), bad.id === "w3" ? "Посчитай ещё раз: от первого сообщения до свадьбы." : "Это слово не подходит. Загляни в записку ещё раз.");
+    else next();
+  };
+});
+
+step(3, function () {
+  h('<p class="eyebrow">Глава 3</p><h2>Что впереди</h2>' +
+    '<p class="letter">' + todo(CONFIG.letter) + '</p>' +
+    '<p class="quote">А теперь иди за подарком.</p>' +
+    '<p>' + todo(CONFIG.giftPlace) + '</p>');
+});
+
+/* ---------- общие виды ---------- */
+function choice(c) {
+  h('<p class="eyebrow">' + c.eyebrow + '</p><h2>' + c.q + '</h2>' +
+    '<div class="opts" id="opts">' + c.opts.map(function (o, i) {
+      return '<button class="opt" type="button" data-i="' + i + '">' + o + '</button>';
+    }).join("") + '</div><p class="msg" id="msg"></p>');
+  $("opts").onclick = function (e) {
+    var b = e.target.closest(".opt");
+    if (!b) return;
+    if (+b.dataset.i === c.right) {
+      h('<p class="eyebrow">' + c.eyebrow + '</p><h2>' + c.opts[c.right] + '</h2><p>' + c.after + '</p>' +
+        '<button class="btn" id="go" type="button">Дальше</button>');
+      $("go").onclick = next;
+    } else {
+      b.classList.add("wrong"); b.disabled = true;
+      nope(b, $("msg"), c.wrong);
+    }
+  };
+}
+
+function code(c) {
+  h('<p class="eyebrow">' + c.eyebrow + '</p><h2>' + c.title + '</h2><p>' + c.text + '</p>' +
+    '<p>' + todo(c.clue) + '</p>' +
+    '<div class="field"><label for="code">' + c.label + '</label>' +
+    '<input type="text" id="code" autocomplete="off" autocapitalize="characters"></div>' +
+    '<p class="msg" id="msg"></p>' +
+    '<button class="btn" id="go" type="button">Проверить</button>');
+  $("go").onclick = function () {
+    if (norm($("code").value) === norm(c.answer)) next();
+    else nope($("code"), $("msg"), "Не то слово. Проверь, как оно написано.");
+  };
+}
+
+/* ---------- пятнашки 3×3 ---------- */
+function puzzle() {
+  var N = 3, EMPTY = N * N - 1;
+  var cells = [];           // cells[position] = tile id
+  for (var i = 0; i < N * N; i++) cells.push(i);
+  var moves = 0, started = Date.now();
+
+  function neighbors(p) {
+    var r = Math.floor(p / N), c = p % N, out = [];
+    if (r > 0) out.push(p - N);
+    if (r < N - 1) out.push(p + N);
+    if (c > 0) out.push(p - 1);
+    if (c < N - 1) out.push(p + 1);
+    return out;
+  }
+  function solved() { for (var i = 0; i < cells.length; i++) if (cells[i] !== i) return false; return true; }
+  // перемешиваем честными ходами, поэтому пазл всегда собирается
+  var e = EMPTY, prev = -1;
+  for (var k = 0; k < 60 || solved(); k++) {
+    var ns = neighbors(e).filter(function (p) { return p !== prev; });
+    var p = ns[Math.floor(Math.random() * ns.length)];
+    cells[e] = cells[p]; cells[p] = EMPTY; prev = e; e = p;
+  }
+
+  h('<p class="eyebrow">Глава 1</p><h2>Собери фотографию</h2>' +
+    '<p class="soft">Нажимай на кусочек рядом с пустой клеткой, он переедет в неё.</p>' +
+    '<div class="board" id="board"></div>' +
+    '<div class="row"><span class="count" id="count">Ходов: 0</span>' +
+    '<button class="btn ghost" id="nums" type="button">Показать номера</button>' +
+    '<button class="btn ghost" id="solve" type="button" hidden>Собрать за меня</button></div>');
+
+  var board = $("board"), tiles = {};
+  for (var t = 0; t < EMPTY; t++) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "tile";
+    b.style.backgroundPosition = (t % N) * 50 + "% " + Math.floor(t / N) * 50 + "%";
+    b.setAttribute("aria-label", "Кусочек " + (t + 1));
+    b.innerHTML = "<span>" + (t + 1) + "</span>";
+    b.dataset.t = t;
+    board.appendChild(b); tiles[t] = b;
+  }
+  function place() {
+    cells.forEach(function (id, pos) {
+      if (id === EMPTY) return;
+      tiles[id].style.left = (pos % N) * 33.3333 + "%";
+      tiles[id].style.top = Math.floor(pos / N) * 33.3333 + "%";
+    });
+  }
+  place();
+  board.onclick = function (ev) {
+    var b = ev.target.closest(".tile");
+    if (!b) return;
+    var pos = cells.indexOf(+b.dataset.t), emp = cells.indexOf(EMPTY);
+    if (neighbors(pos).indexOf(emp) < 0) return;
+    cells[emp] = cells[pos]; cells[pos] = EMPTY;
+    moves++; $("count").textContent = "Ходов: " + moves;
+    place();
+    if (moves >= 120 || Date.now() - started > 4 * 60 * 1000) $("solve").hidden = false;
+    if (solved()) setTimeout(next, 450);
+  };
+  $("nums").onclick = function () {
+    var on = board.classList.toggle("nums");
+    this.textContent = on ? "Скрыть номера" : "Показать номера";
+  };
+  $("solve").onclick = next;
+  if (author) $("solve").hidden = false;
+}
+
+/* ---------- апож: песня задом наперёд ---------- */
+function apozh() {
+  var A = CONFIG.apozh, N = A.cuts.length + 1;
+  var ctx = null, sr = 44100, rev = null, orig = null, bounds = [];
+  var recs = [], stream = null, recorder = null, recIdx = -1, stopTimer = null;
+  var fails = 0, flipped = false, micOff = false;
+  var player = new Audio(), lastUrl = null;
+
+  function wav(s) {
+    var buf = new ArrayBuffer(44 + s.length * 2), v = new DataView(buf);
+    function str(o, t) { for (var i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }
+    str(0, "RIFF"); v.setUint32(4, 36 + s.length * 2, true); str(8, "WAVEfmt ");
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    str(36, "data"); v.setUint32(40, s.length * 2, true);
+    for (var i = 0; i < s.length; i++) {
+      var x = Math.max(-1, Math.min(1, s[i]));
+      v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7fff, true);
+    }
+    return new Blob([buf], { type: "audio/wav" });
+  }
+  function play(s) {
+    player.pause();
+    if (lastUrl) URL.revokeObjectURL(lastUrl);
+    lastUrl = URL.createObjectURL(wav(s));
+    player.src = lastUrl;
+    player.play().catch(function () {});
+  }
+  function reversed(s) { var r = new Float32Array(s.length); for (var i = 0; i < s.length; i++) r[i] = s[s.length - 1 - i]; return r; }
+  function decode(ab) { return new Promise(function (res, rej) { ctx.decodeAudioData(ab, res, rej); }); }
+  function part(i) { return rev.subarray(bounds[i], bounds[i + 1]); }
+  // обрезаем тишину по краям записи, чтобы в склейке не было пауз
+  function trim(s) {
+    var a = 0, b = s.length - 1, T = 0.02;
+    while (a < b && Math.abs(s[a]) < T) a++;
+    while (b > a && Math.abs(s[b]) < T) b--;
+    var pad = Math.floor(sr * 0.05);
+    a = Math.max(0, a - pad); b = Math.min(s.length - 1, b + pad);
+    return b - a < sr * 0.2 ? s : s.slice(a, b + 1);
+  }
+  function allDone() { for (var i = 0; i < N; i++) if (!recs[i]) return false; return true; }
+
+  h('<p class="eyebrow">Глава 2</p><h2>Апож</h2>' +
+    '<p>Я спрятал одну нашу песню, перевернув её задом наперёд. Ты слушаешь её по кусочкам и повторяешь в микрофон всё, что слышишь, как можно точнее. Потом я переверну твои записи обратно, и ты попробуешь узнать песню.</p>' +
+    '<p class="soft">Включи звук на телефоне и разреши доступ к микрофону, когда браузер спросит.</p>' +
+    '<p class="msg" id="msg"></p>' +
+    '<button class="btn" id="go" type="button">Начать</button>');
+  $("go").onclick = function () {
+    $("go").disabled = true; $("msg").textContent = "Загружаю песню…";
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      sr = ctx.sampleRate;
+    } catch (e) {}
+    if (!ctx) { $("msg").textContent = "Этот браузер не умеет работать со звуком. Открой сайт в Safari или Chrome."; return; }
+    fetch(A.src).then(function (r) { return r.arrayBuffer(); }).then(decode).then(function (buf) {
+      orig = new Float32Array(buf.getChannelData(0));
+      rev = reversed(orig);
+      // в перевёрнутой записи части идут с конца песни к началу
+      bounds = [0].concat(A.cuts.slice().reverse().map(function (c) { return rev.length - Math.round(c * sr); })).concat([rev.length]);
+      micOff = !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+      draw();
+    }).catch(function () {
+      $("go").disabled = false;
+      $("msg").textContent = "Песня не загрузилась. Проверь интернет и нажми ещё раз.";
+    });
+  };
+
+  function draw(note) {
+    var rows = "";
+    for (var i = 0; i < N; i++) {
+      var rec = recIdx === i;
+      rows += '<div class="az-row"><span class="az-n">Часть ' + (i + 1) + (recs[i] ? " · записана" : "") + '</span><div class="row">' +
+        '<button class="btn ghost" type="button" data-a="hear" data-i="' + i + '"' + (recIdx >= 0 ? " disabled" : "") + '>Слушать</button>' +
+        (micOff ? "" : '<button class="btn ghost' + (rec ? " az-rec" : "") + '" type="button" data-a="rec" data-i="' + i + '"' + (recIdx >= 0 && !rec ? " disabled" : "") + '>' + (rec ? "Стоп" : recs[i] ? "Перезаписать" : "Записать") + '</button>') +
+        (recs[i] && !rec ? '<button class="btn ghost" type="button" data-a="mine" data-i="' + i + '">Моя запись</button>' : "") +
+        '</div></div>';
+    }
+    var guess = flipped || micOff;
+    h('<p class="eyebrow">Глава 2 · апож</p><h2>' + (guess ? "Что это за песня?" : "Повтори, что слышишь") + '</h2>' +
+      (micOff ? '<p class="soft">Микрофон здесь недоступен, поэтому просто слушай перевёрнутую песню и угадывай.</p>' : "") +
+      '<div class="row"><button class="btn ghost" type="button" data-a="all"' + (recIdx >= 0 ? " disabled" : "") + '>Послушать целиком задом наперёд</button></div>' +
+      '<div class="az" id="az">' + rows + '</div>' +
+      (!micOff && allDone() ? '<button class="btn" type="button" data-a="flip">Перевернуть мои записи</button>' : "") +
+      (guess ? '<div class="field"><label for="song">Название песни</label><input type="text" id="song" autocomplete="off"></div>' +
+        '<div class="row"><button class="btn" type="button" data-a="check">Проверить</button>' +
+        (fails >= 4 ? '<button class="btn ghost" type="button" data-a="giveup">Сдаюсь, включи оригинал</button>' : "") + '</div>' : "") +
+      '<p class="msg" id="msg">' + (note || (fails >= 2 && guess ? A.hint : "")) + '</p>');
+  }
+
+  view.onclick = function (e) {
+    var b = e.target.closest("[data-a]");
+    if (!b || !rev) return;
+    var a = b.dataset.a, i = +b.dataset.i;
+    if (a === "all") play(rev);
+    else if (a === "hear") play(part(i));
+    else if (a === "mine") play(recs[i]);
+    else if (a === "rec") { if (recIdx === i) stopRec(); else startRec(i); }
+    else if (a === "flip") {
+      var len = 0, k;
+      for (k = 0; k < N; k++) len += recs[k].length;
+      var out = new Float32Array(len), o = 0;
+      for (k = N - 1; k >= 0; k--) { out.set(reversed(recs[k]), o); o += recs[k].length; }
+      flipped = true; draw(); play(out);
+    }
+    else if (a === "check") {
+      var v = norm($("song").value);
+      var ok = A.answers.some(function (x) { return v.indexOf(x) >= 0; });
+      if (ok) win(true);
+      else { fails++; draw(fails >= 2 ? A.hint : "Не она. Послушай ещё раз."); nope($("song")); }
+    }
+    else if (a === "giveup") win(false);
+  };
+
+  function startRec(i) {
+    player.pause();
+    var p = stream ? Promise.resolve(stream) : navigator.mediaDevices.getUserMedia({ audio: true });
+    p.then(function (s) {
+      stream = s;
+      var chunks = [];
+      recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) chunks.push(ev.data); };
+      recorder.onstop = function () {
+        var blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+        recIdx = -1;
+        blob.arrayBuffer().then(decode).then(function (buf) {
+          recs[i] = trim(new Float32Array(buf.getChannelData(0)));
+          flipped = false; draw();
+        }).catch(function () { draw("Запись не получилась. Попробуй ещё раз."); });
+      };
+      recorder.start();
+      recIdx = i; draw("Идёт запись. Повтори услышанное и нажми «Стоп».");
+      stopTimer = setTimeout(stopRec, ((bounds[i + 1] - bounds[i]) / sr) * 2500 + 1500);
+    }).catch(function () {
+      draw("Нет доступа к микрофону. Разреши его в настройках браузера для этого сайта и попробуй снова.");
+    });
+  }
+  function stopRec() {
+    clearTimeout(stopTimer);
+    if (recorder && recorder.state !== "inactive") recorder.stop();
+  }
+  function win(guessed) {
+    view.onclick = null;
+    if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+    h('<p class="eyebrow">Глава 2 · апож</p><h2>' + (guessed ? "Она самая" : "Вот что это было") + '</h2>' +
+      '<p>' + (guessed ? "Ты узнала её даже задом наперёд." : "Задом наперёд она сама на себя не похожа, так что это не считается.") + ' Послушай, как она звучит на самом деле.</p>' +
+      '<div class="row"><button class="btn ghost" id="orig" type="button">Включить оригинал</button></div>' +
+      '<button class="btn" id="go" type="button">Дальше</button>');
+    $("orig").onclick = function () { play(orig); };
+    $("go").onclick = function () { player.pause(); next(); };
+    play(orig);
+  }
+}
+
+/* ---------- каркас ---------- */
+function render() {
+  if (state.step >= STEPS.length) state.step = STEPS.length - 1;
+  var s = STEPS[state.step];
+  view.onclick = null;
+  s.fn();
+  // третья глава не показывается в списке, пока не откроется: до этого история выглядит законченной
+  var show3 = s.ch === 3 && isOpen(3);
+  var fakeEnd = s.ch === 3 && !show3;
+  var chips = [1, 2].concat(show3 ? [3] : []);
+  $("chips").innerHTML = chips.map(function (n) {
+    var cls = fakeEnd || n < s.ch ? "done" : n === s.ch ? "now" : "";
+    return '<span class="chip ' + cls + '">Глава ' + n + "</span>";
+  }).join("");
+  $("authorBox").innerHTML = author
+    ? '<div class="author"><span>Режим автора: главы открыты без ожидания. Шаг ' + (state.step + 1) + " из " + STEPS.length + '.</span>' +
+      '<div class="row"><button class="btn ghost" id="aPrev" type="button">Назад</button>' +
+      '<button class="btn ghost" id="aNext" type="button">Пропустить шаг</button>' +
+      '<button class="btn ghost" id="aReset" type="button">Сбросить прогресс</button></div></div>'
+    : "";
+  if (author) {
+    $("aPrev").onclick = function () { go(Math.max(0, state.step - 1)); };
+    $("aNext").onclick = function () { go(Math.min(STEPS.length - 1, state.step + 1)); };
+    $("aReset").onclick = function () { go(0); };
+  }
+}
+
+// пять быстрых нажатий на подпись внизу включают режим автора
+var taps = 0, tapTimer = null;
+$("mark").onclick = function () {
+  taps++;
+  clearTimeout(tapTimer);
+  tapTimer = setTimeout(function () { taps = 0; }, 1500);
+  if (taps >= 5) { taps = 0; author = !author; render(); }
+};
+
+// экраны ожидания сами сменятся, когда придёт время
+var GATES = { 1: 0, 2: 6, 3: 10 };
+var wasOpen = {};
+setInterval(function () {
+  var s = STEPS[state.step];
+  if (state.step !== GATES[s.ch]) return;
+  var now = isOpen(s.ch);
+  if (now && wasOpen[s.ch] === false) render();
+  wasOpen[s.ch] = now;
+}, 20000);
+
+render();
+(function () { var s = STEPS[state.step]; wasOpen[s.ch] = isOpen(s.ch); })();
+</script>
+</body>
+</html>
