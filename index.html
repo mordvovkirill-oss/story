@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Наша история</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,14 +31,15 @@ body {
   font-size: 17px;
   line-height: 1.55;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 .page {
   max-width: 460px;
   margin: 0 auto;
-  padding: 28px 18px 40px;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
   min-height: 100dvh;
 }
 header { display: flex; flex-direction: column; gap: 12px; }
@@ -64,8 +65,8 @@ header { display: flex; flex-direction: column; gap: 12px; }
 .chip.done { color: var(--ink); border-color: var(--ink); }
 main {
   background: var(--card);
-  border-radius: 6px;
-  padding: 26px 22px 24px;
+  border-radius: 10px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -103,16 +104,17 @@ p { margin: 0; }
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-button { font: inherit; color: inherit; cursor: pointer; }
+button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
 .btn {
-  align-self: flex-start;
+  align-self: stretch;
   background: var(--wine);
   color: #fff;
   border: 0;
-  border-radius: 4px;
+  border-radius: 8px;
+  min-height: 52px;
   padding: 12px 22px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 17px;
 }
 .btn:active { transform: translateY(1px); }
 .btn.ghost {
@@ -120,9 +122,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
   color: var(--ink);
   border: 1px solid var(--line);
   font-weight: 500;
-  padding: 9px 14px;
-  font-size: 14px;
+  min-height: 46px;
+  padding: 8px 14px;
+  font-size: 15px;
+  border-radius: 8px;
 }
+.row > .btn { flex: 1 1 auto; }
+.row > .count { flex: 0 0 auto; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outline-offset: 2px; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
@@ -132,7 +138,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outl
   width: 100%;
   aspect-ratio: 1 / 1;
   background: var(--paper);
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
 }
 .tile {
@@ -160,7 +166,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outl
   text-align: center;
 }
 .board.nums .tile span { display: block; }
-.photo { width: 100%; border-radius: 4px; display: block; }
+.photo { width: 100%; border-radius: 8px; display: block; }
 .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* questions */
@@ -169,8 +175,9 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outl
   text-align: left;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 12px 14px;
+  border-radius: 8px;
+  min-height: 52px;
+  padding: 12px 16px;
 }
 .opt.wrong { border-color: var(--line); color: var(--muted); text-decoration: line-through; }
 .field { display: flex; flex-direction: column; gap: 6px; }
@@ -178,9 +185,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outl
 input[type="text"] {
   font: inherit;
   width: 100%;
-  padding: 12px 14px;
+  min-height: 52px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 8px;
   background: var(--card);
   color: var(--ink);
 }
@@ -196,8 +204,19 @@ input[type="text"] {
 }
 .letter { white-space: pre-line; }
 .az { display: flex; flex-direction: column; }
-.az-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); }
-.az-n { font-size: 14px; color: var(--muted); }
+.az-row { display: flex; flex-direction: column; gap: 8px; padding: 14px 0; border-top: 1px solid var(--line); }
+.az-row:last-child { padding-bottom: 0; }
+.az-n { font-size: 14px; font-weight: 500; color: var(--muted); }
+.az-n b { color: var(--wine); font-weight: 600; }
+.az-n span { font-variant-numeric: tabular-nums; }
+.az-bar { height: 6px; border-radius: 3px; background: var(--paper); overflow: hidden; }
+.az-bar i { display: block; height: 100%; width: 100%; background: var(--wine); transform: scaleX(0); transform-origin: left; }
+.az-bar.over i { background: var(--ink); }
+.az-tl { position: relative; display: flex; gap: 3px; height: 26px; border-radius: 6px; overflow: hidden; }
+.az-tl span { background: var(--paper); font-size: 12px; font-weight: 600; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.az-tl i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--wine); opacity: 0.3; }
+.az-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.az-btns .btn { padding: 8px 4px; font-size: 15px; white-space: nowrap; }
 .btn.ghost.az-rec { background: var(--wine); border-color: var(--wine); color: #fff; }
 .btn:disabled { opacity: 0.45; cursor: default; }
 footer {
@@ -532,6 +551,7 @@ function apozh() {
   var ctx = null, sr = 44100, rev = null, orig = null, bounds = [];
   var recs = [], stream = null, recorder = null, recIdx = -1, stopTimer = null;
   var fails = 0, flipped = false, micOff = false;
+  var cur = null, recStart = 0, ticking = false;
   var player = new Audio(), lastUrl = null;
 
   function wav(s) {
@@ -547,7 +567,8 @@ function apozh() {
     }
     return new Blob([buf], { type: "audio/wav" });
   }
-  function play(s) {
+  function play(s, kind, i) {
+    cur = { kind: kind, i: i };
     player.pause();
     if (lastUrl) URL.revokeObjectURL(lastUrl);
     lastUrl = URL.createObjectURL(wav(s));
@@ -593,35 +614,60 @@ function apozh() {
     });
   };
 
+  function dur(i) { return (bounds[i + 1] - bounds[i]) / sr; }
+  function fmt(x) { return x.toFixed(1).replace(".", ","); }
+  // полоски: сколько длится кусок, где сейчас звук и сколько уже записано
+  function tick() {
+    if (!$("az")) { ticking = false; return; }
+    var on = cur && !player.paused && !player.ended && player.duration;
+    var frac = on ? Math.min(1, player.currentTime / player.duration) : 0;
+    $("azfill").style.width = (on && cur.kind === "all" ? frac * 100 : 0) + "%";
+    for (var i = 0; i < N; i++) {
+      var w = 0, t = fmt(dur(i)) + " с", over = false;
+      if (recIdx === i) {
+        var e = (Date.now() - recStart) / 1000;
+        w = Math.min(1, e / dur(i)); over = e > dur(i);
+        t = fmt(e) + " / " + fmt(dur(i)) + " с";
+      } else if (on && cur.i === i && cur.kind !== "all") w = frac;
+      $("azb" + i).firstChild.style.transform = "scaleX(" + w + ")";
+      $("azb" + i).classList.toggle("over", over);
+      $("azt" + i).textContent = t;
+    }
+    requestAnimationFrame(tick);
+  }
   function draw(note) {
-    var rows = "";
+    var rows = "", tl = "";
+    for (var k = 0; k < N; k++) tl += '<span style="flex:' + dur(k).toFixed(2) + '">' + (k + 1) + '</span>';
     for (var i = 0; i < N; i++) {
       var rec = recIdx === i;
-      rows += '<div class="az-row"><span class="az-n">Часть ' + (i + 1) + (recs[i] ? " · записана" : "") + '</span><div class="row">' +
+      rows += '<div class="az-row"><span class="az-n">Часть ' + (i + 1) + ' · <span id="azt' + i + '">' + fmt(dur(i)) + ' с</span>' + (recs[i] ? " · <b>записана</b>" : "") + '</span>' +
+        '<div class="az-bar" id="azb' + i + '"><i></i></div><div class="az-btns">' +
         '<button class="btn ghost" type="button" data-a="hear" data-i="' + i + '"' + (recIdx >= 0 ? " disabled" : "") + '>Слушать</button>' +
-        (micOff ? "" : '<button class="btn ghost' + (rec ? " az-rec" : "") + '" type="button" data-a="rec" data-i="' + i + '"' + (recIdx >= 0 && !rec ? " disabled" : "") + '>' + (rec ? "Стоп" : recs[i] ? "Перезаписать" : "Записать") + '</button>') +
-        (recs[i] && !rec ? '<button class="btn ghost" type="button" data-a="mine" data-i="' + i + '">Моя запись</button>' : "") +
+        (micOff ? "" : '<button class="btn ghost' + (rec ? " az-rec" : "") + '" type="button" data-a="rec" data-i="' + i + '"' + (recIdx >= 0 && !rec ? " disabled" : "") + '>' + (rec ? "Стоп" : recs[i] ? "Заново" : "Записать") + '</button>') +
+        (micOff ? "" : '<button class="btn ghost" type="button" data-a="mine" data-i="' + i + '"' + (recs[i] && recIdx < 0 ? "" : " disabled") + '>Моя запись</button>') +
         '</div></div>';
     }
     var guess = flipped || micOff;
     h('<p class="eyebrow">Глава 2 · апож</p><h2>' + (guess ? "Что это за песня?" : "Повтори, что слышишь") + '</h2>' +
       (micOff ? '<p class="soft">Микрофон здесь недоступен, поэтому просто слушай перевёрнутую песню и угадывай.</p>' : "") +
       '<div class="row"><button class="btn ghost" type="button" data-a="all"' + (recIdx >= 0 ? " disabled" : "") + '>Послушать целиком задом наперёд</button></div>' +
+      '<div class="az-tl" id="aztl">' + tl + '<i id="azfill"></i></div>' +
       '<div class="az" id="az">' + rows + '</div>' +
       (!micOff && allDone() ? '<button class="btn" type="button" data-a="flip">Перевернуть мои записи</button>' : "") +
       (guess ? '<div class="field"><label for="song">Название песни</label><input type="text" id="song" autocomplete="off"></div>' +
         '<div class="row"><button class="btn" type="button" data-a="check">Проверить</button>' +
         (fails >= 4 ? '<button class="btn ghost" type="button" data-a="giveup">Сдаюсь, включи оригинал</button>' : "") + '</div>' : "") +
       '<p class="msg" id="msg">' + (note || (fails >= 2 && guess ? A.hint : "")) + '</p>');
+    if (!ticking) { ticking = true; requestAnimationFrame(tick); }
   }
 
   view.onclick = function (e) {
     var b = e.target.closest("[data-a]");
     if (!b || !rev) return;
     var a = b.dataset.a, i = +b.dataset.i;
-    if (a === "all") play(rev);
-    else if (a === "hear") play(part(i));
-    else if (a === "mine") play(recs[i]);
+    if (a === "all") play(rev, "all");
+    else if (a === "hear") play(part(i), "part", i);
+    else if (a === "mine") play(recs[i], "mine", i);
     else if (a === "rec") { if (recIdx === i) stopRec(); else startRec(i); }
     else if (a === "flip") {
       var len = 0, k;
@@ -655,7 +701,7 @@ function apozh() {
           flipped = false; draw();
         }).catch(function () { draw("Запись не получилась. Попробуй ещё раз."); });
       };
-      recorder.start();
+      recorder.start(); recStart = Date.now();
       recIdx = i; draw("Идёт запись. Повтори услышанное и нажми «Стоп».");
       stopTimer = setTimeout(stopRec, ((bounds[i + 1] - bounds[i]) / sr) * 2500 + 1500);
     }).catch(function () {
