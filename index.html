@@ -6,21 +6,22 @@
 <title>Наша история</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400&display=swap" rel="stylesheet">
 <style>
 :root {
   /* Layout: one narrow column, like a page of a small book. One step on screen at a time. */
   color-scheme: light;
-  --paper: #eef0f3;
-  --card: #ffffff;
-  --ink: #1b1d23;
-  --muted: #666b75;
-  --line: #d6d9df;
-  --wine: #8a2846;
+  --paper: #f8f4ed;
+  --card: #fffcf8;
+  --ink: #30262a;
+  --muted: #78665f;
+  --line: #d9cbbe;
+  --wine: #862e48;
   --wine-soft: #f4e4ea;
   --todo: #ffe680;
-  --display: "Cormorant Garamond", "Times New Roman", serif;
-  --body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Lora", Georgia, serif;
+  --body: "Lora", Georgia, serif;
+  --hand: "Caveat", cursive;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -238,11 +239,47 @@ footer {
   gap: 8px;
   width: 100%;
 }
+/* Letter concept — intentionally only two font families. */
+.page { padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); gap: 24px; }
+header { text-align: center; gap: 15px; }
+.brand { font-size: 36px; font-weight: 500; }
+.dateline { font-size: 11px; letter-spacing: .16em; color: var(--muted); }
+.steps { flex-wrap: nowrap; gap: 0; border-bottom: 1px solid var(--line); }
+.chip { flex: 1; border: 0; border-radius: 0; padding: 10px 4px; }
+.chip.now { background: transparent; box-shadow: 0 2px 0 var(--wine); }
+main { background: transparent; box-shadow: none; border-radius: 0; padding: 12px 0 24px; gap: 20px; }
+h2 { font-size: 29px; font-weight: 500; line-height: 1.25; }
+.eyebrow { font-size: 11px; color: var(--muted); }
+.btn, .btn.ghost, .opt, input[type="text"] { border-radius: 4px; }
+.opt, input[type="text"] { background: transparent; }
+.quote { text-align: center; font-family: var(--body); }
+.letter { font-family: var(--hand); font-size: 28px; font-weight: 400; font-style: normal; color: var(--ink); white-space: normal; line-height: 1.3; overflow-wrap: break-word; }
+.letter p + p { margin-top: .85em; }
+.letter .signature { text-align: right; font-size: 30px; margin-top: .85em; }
+.letter h2 { font: inherit; }
+.letter h2 + p { margin-top: .85em; }
+.photo { border: 7px solid var(--card); border-radius: 2px; }
+footer { align-items: center; }
+#authorBox { width: 100%; }
+.mark { font-size: 14px; min-height: 44px; }
+.az-bar, .az-tl span { background: var(--line); }
+.az-btns .btn { font-size: 13px; min-width: 0; }
+.hint { color: var(--wine); font-size: 15px; }
+.hint summary { cursor: pointer; padding: 12px 0; }
+.hint p { color: var(--muted); }
+@media (max-width: 360px) { .page { padding-left: 16px; padding-right: 16px; } .brand { font-size: 30px; } }
+/* Personal notes — one shared paper treatment, separate from game UI. */
+.letter { background: #fffcf6; padding: 24px; border-radius: 2px; box-shadow: 0 2px 8px rgba(48,38,42,.07); }
+.letter.note-photo { padding: 12px 12px 20px; }
+.note-photo .photo { border: 0; border-radius: 0; }
+.note-photo .photo-caption { margin: 16px 8px 0; text-align: center; }
+@media (max-width: 360px) { .letter { padding: 20px; } }
 </style>
 </head>
 <body>
 <div class="page">
   <header>
+    <p class="dateline">20–24 НОЯБРЯ 2026</p>
     <h1 class="brand">Наша история</h1>
     <div class="steps" id="chips"></div>
   </header>
@@ -265,25 +302,27 @@ var CONFIG = {
   openText: { 1: "20 ноября в 19:00", 2: "21 ноября в 12:00", 3: "22 ноября в 19:00" },
   photoCaption: "Я уже скучаю по тебе, Катя.",
   firstMessage: ["18072015", "180715"],
-  clue1: "ПОДСКАЗКА К ПЕРВОМУ ТАЙНИКУ (место придумает Кирилл)",
-  code1: "ИЮЛЬ",
-  clue2: "ПОДСКАЗКА КО ВТОРОМУ ТАЙНИКУ (место придумает Кирилл)",
-  code2: "АВГУСТ",
-  years: "5",
+  clue1: "Там, где обычно рождается что-то вкусное, сегодня спряталось кое-что для тебя. Только искать нужно чуть ниже.",
+  hint1: "Загляни в ящик под духовкой.",
+  code1: "МЫСЛЯМИ",
+  clue2: "Говорят, сладости перед сном — плохая привычка. А что, если они всё это время были прямо под тобой?",
+  hint2: "Загляни под матрас, ближе к изголовью.",
+  code2: "ВСЕГДА",
   apozh: {
     src: "clip.mp3",          // фрагмент песни в обычном виде, сайт сам его переворачивает
     cuts: [4, 9, 13],         // границы частей в секундах от начала фрагмента (в обычном, не перевёрнутом виде)
     answers: ["ОКОЛОТЕБЯ"],   // без пробелов, заглавными
     hint: "Подсказка: это поёт Ёлка."
   },
-  letter: "ПИСЬМО КИРИЛЛА (текст напишет сам)",
-  giftPlace: "ГДЕ ЛЕЖИТ ПОДАРОК (место придумает Кирилл)"
+  letter: "Катя, любимая моя!\n\nПока я в отъезде, мне хотелось, чтобы у нас с тобой было что-то общее, несмотря на расстояние. Так и появилась эта маленькая история.\n\nВсё началось с одной случайной встречи на свадьбе и одного сообщения. Кто бы тогда мог подумать, сколько всего нас ждёт впереди.\n\nС тех пор столько всего произошло: наши путешествия, свадьба, совместные планы, маленькие радости и самые обычные вечера дома. Из всего этого и складывается наша история.\n\nКогда я уезжаю, мне особенно не хватает наших вечеров. Возможности обнять тебя перед сном, прижать к себе и уснуть рядом.\n\nИ, конечно, возможности сделать тебе кусь. Ну куда же без этого? Готовься, за эти дни у меня накопится много нерастраченных кусей.\n\nЯ очень люблю нашу жизнь вдвоём. И ещё больше люблю думать о том, сколько всего нам предстоит пережить вместе.\n\nГде бы я ни находился, мыслями я всегда около тебя.\n\nЛюблю тебя, родная. Скоро буду дома.\n\nТвой К.",
+  giftPlace: "Год назад мы впервые вместе гуляли по Парижу. С тех пор одна дама живёт у нас в углу комнаты, на колонке. Загляни туда, где она жила, пока мы её не собрали."
 };
 /* ================================================================================ */
 
-var KEY = "nasha-istoriya-v1";
+var KEY = "nasha-istoriya-paper-v4";
 var state = { step: 0 };
 var author = false;
+var previewGate = 0;
 try {
   var saved = JSON.parse(localStorage.getItem(KEY) || "null");
   if (saved && typeof saved.step === "number") state = saved;
@@ -294,8 +333,8 @@ var view = document.getElementById("view");
 function h(html) { view.innerHTML = html; }
 function $(id) { return document.getElementById(id); }
 function norm(s) { return String(s).toUpperCase().replace(/Ё/g, "Е").replace(/\s+/g, "").trim(); }
-function isOpen(ch) { return author || Date.now() >= CONFIG.open[ch]; }
-function go(n) { state.step = n; save(); render(); window.scrollTo(0, 0); }
+function isOpen(ch) { return !(author && previewGate === ch) && (author || Date.now() >= CONFIG.open[ch]); }
+function go(n) { previewGate = 0; state.step = n; save(); render(); window.scrollTo(0, 0); }
 function next() { go(state.step + 1); }
 function todo(t) { return '<span class="todo">' + t + "</span>"; }
 function nope(el, msgEl, text) {
@@ -315,7 +354,7 @@ step(1, function () {
     return;
   }
   h('<p class="eyebrow">Глава 1</p><h2>Как всё началось</h2>' +
-    '<p>Катя, пока я катаюсь, у тебя есть своё приключение. Оно про нас двоих, займёт пару вечеров, и в конце тебя кое-что ждёт.</p>' +
+    '<div class="letter"><p>Катя,</p><p>пока я катаюсь, у тебя есть своё приключение. Оно про нас двоих, займёт пару вечеров, и в конце тебя кое-что ждёт.</p><p class="signature">Твой К.</p></div>' +
     '<p>Начнём с простого: собери одну фотографию.</p>' +
     '<button class="btn" id="go" type="button">Начать</button>');
   $("go").onclick = next;
@@ -325,8 +364,8 @@ step(1, function () { puzzle(); });
 
 step(1, function () {
   h('<p class="eyebrow">Глава 1</p>' +
-    '<img class="photo" src="photo.jpg" alt="Мы вдвоём с бокалами шампанского">' +
-    '<p class="quote">' + CONFIG.photoCaption + '</p>' +
+    '<figure class="letter note-photo" style="margin:0"><img class="photo" src="photo.jpg" alt="Мы вдвоём с бокалами шампанского">' +
+    '<figcaption class="photo-caption">' + CONFIG.photoCaption + '</figcaption></figure>' +
     '<button class="btn" id="go" type="button">Дальше</button>');
   $("go").onclick = next;
 });
@@ -339,6 +378,17 @@ step(1, function () {
     right: 1,
     wrong: "Не там. Вспомни, кто в тот день был в белом.",
     after: "А потом оказалось, что жених приходится тебе двоюродным братом. Лучший повод сходить на чужую свадьбу."
+  });
+});
+
+step(1, function () {
+  choice({
+    eyebrow: "Глава 1",
+    q: "Сколько мне было лет, когда мы познакомились?",
+    opts: ["19", "20", "21", "23"],
+    right: 2,
+    wrong: "Не угадала. Я тогда был не настолько молод. Или не настолько стар.",
+    after: "Двадцать один. Молодой, смелый и решился написать тебе первым."
   });
 });
 
@@ -362,6 +412,7 @@ step(1, function () {
     title: "18 июля 2015 года",
     text: "С этого сообщения всё и пошло. А теперь оторвись от телефона: в квартире спрятана записка.",
     clue: CONFIG.clue1,
+    hint: CONFIG.hint1,
     label: "Слово из записки",
     answer: CONFIG.code1
   });
@@ -372,18 +423,18 @@ step(2, function () {
   if (!isOpen(2)) {
     h('<p class="eyebrow">Глава 1 пройдена</p><h2>На сегодня всё</h2>' +
       '<p>Записку сохрани, слово из неё ещё пригодится. Вторая глава откроется ' + CONFIG.openText[2] + '.</p>' +
-      '<p class="quote">Спокойной ночи, родная.</p>');
+      '<div class="letter"><p>Спокойной ночи, родная.</p></div>');
     return;
   }
   h('<p class="eyebrow">Глава 2</p><h2>Наш дом</h2>' +
-    '<p>Вчера было про начало. Сегодня про то, что мы успели построить вместе. Несколько вопросов, на которые знаешь ответ только ты.</p>' +
+    '<p>Вчера было про начало. Сегодня про то, что мы успели построить вместе. И пара вопросов, на которые ты точно знаешь ответ.</p>' +
     '<button class="btn" id="go" type="button">Поехали</button>');
   $("go").onclick = next;
 });
 
 step(2, function () {
   choice({
-    eyebrow: "Глава 2",
+    eyebrow: "Глава 2 · вопрос 1 из 3",
     q: "В какой день мы поженились?",
     opts: ["18.08.2020", "08.08.2019", "08.08.2020", "20.08.2020"],
     right: 2,
@@ -392,56 +443,74 @@ step(2, function () {
   });
 });
 
-step(2, function () { apozh(); });
+step(2, function () {
+  choice({
+    eyebrow: "Глава 2 · вопрос 2 из 3",
+    q: "Мы расписались во Дворце бракосочетания №1. Какой у него адрес?",
+    opts: ["Дворцовая набережная, д. 28", "Английская набережная, д. 28", "Фурштатская улица, д. 52", "Дворцовая набережная, д. 32"],
+    right: 1,
+    wrong: "Не там. Вспомни, вдоль какой набережной мы ехали в тот день.",
+    after: "Английская набережная, 28. Мраморная лестница, а на ней ты."
+  });
+});
+
+step(2, function () {
+  choice({ eyebrow: "Глава 2 · вопрос 3 из 3", q: "Во сколько состоялась наша церемония бракосочетания?", opts: ["12:30", "13:00", "13:30", "14:00"], right: 2, wrong: "Попробуй ещё.", after: "13:30. Наше время." });
+});
 
 step(2, function () {
   code({
     eyebrow: "Глава 2",
-    title: "Ты всё про нас помнишь",
+    title: "Конечно, помнишь",
     text: "За это полагается награда. Она уже ждёт тебя дома.",
     clue: CONFIG.clue2,
+    hint: CONFIG.hint2,
     label: "Слово с открытки",
     answer: CONFIG.code2
   });
 });
 
 /* Ложный финал и глава 3 */
+var fakeEndStep = STEPS.length;
 step(3, function () {
   if (!isOpen(3)) {
-    h('<p class="eyebrow">Конец</p><h2>Вот и вся история</h2>' +
-      '<p>Надеюсь, тебе понравилось. ' + todo("ПАРА СЛОВ ПРО ЛОЖНЫЙ ПОДАРОК") + '</p>' +
-      '<p class="quote">Люблю тебя. Вернусь двадцать четвёртого.</p>');
+    h('<p class="eyebrow">Конец</p><div class="letter"><h2>Вот и вся история.</h2>' +
+      '<p>Хотел немного подсластить тебе дни, пока меня нет рядом.</p>' +
+      '<p>Люблю тебя. Вернусь двадцать четвёртого.</p><p class="signature">Твой К.</p></div>');
     return;
   }
   h('<p class="eyebrow">Глава 3</p><h2>Постой. Это ещё не всё</h2>' +
     '<p>Ты же не думала, что я уехал на пять дней и оставил тебе только это? У истории есть третья глава. Она про то, что впереди.</p>' +
+    '<p>Но сначала тебе нужно найти последний ключ. Он спрятан в одной песне.</p>' +
     '<button class="btn" id="go" type="button">Открыть</button>');
   $("go").onclick = next;
 });
 
+step(3, function () { apozh(); });
+
 step(3, function () {
   h('<p class="eyebrow">Глава 3</p><h2>Замок из трёх частей</h2>' +
-    '<p>Два слова у тебя уже есть: одно из записки, второе с открытки. Третью часть посчитай сама.</p>' +
+    '<p>Слово из записки, слово с открытки и название песни. Сложи их по порядку.</p>' +
     '<div class="field"><label for="w1">Слово из первой записки</label><input type="text" id="w1" autocomplete="off"></div>' +
     '<div class="field"><label for="w2">Слово с открытки</label><input type="text" id="w2" autocomplete="off"></div>' +
-    '<div class="field"><label for="w3">Сколько полных лет прошло от первого сообщения до свадьбы?</label><input type="text" id="w3" inputmode="numeric" autocomplete="off"></div>' +
+    '<div class="field"><label for="w3">Название песни</label><input type="text" id="w3" autocomplete="off"></div>' +
     '<p class="msg" id="msg"></p>' +
     '<button class="btn" id="go" type="button">Открыть замок</button>');
   $("go").onclick = function () {
     var bad = null;
     if (norm($("w1").value) !== norm(CONFIG.code1)) bad = $("w1");
     else if (norm($("w2").value) !== norm(CONFIG.code2)) bad = $("w2");
-    else if (norm($("w3").value) !== CONFIG.years) bad = $("w3");
-    if (bad) nope(bad, $("msg"), bad.id === "w3" ? "Посчитай ещё раз: от первого сообщения до свадьбы." : "Это слово не подходит. Загляни в записку ещё раз.");
+    else if (CONFIG.apozh.answers.indexOf(norm($("w3").value)) < 0) bad = $("w3");
+    if (bad) nope(bad, $("msg"), bad.id === "w3" ? "Это не та песня. Вспомни, что ты только что слушала." : bad.id === "w1" ? "Это слово не подходит. Загляни в первую записку ещё раз." : "Это слово не подходит. Загляни в открытку ещё раз.");
     else next();
   };
 });
 
 step(3, function () {
-  h('<p class="eyebrow">Глава 3</p><h2>Что впереди</h2>' +
-    '<p class="letter">' + todo(CONFIG.letter) + '</p>' +
+  h('<p class="eyebrow">Глава 3</p><h2>Мыслями всегда около тебя</h2>' +
+    '<div class="letter">' + CONFIG.letter.split('\n\n').map(function(t,i,a){ return '<p class="' + (i===a.length-1 ? 'signature' : '') + '">' + t + '</p>'; }).join('') + '</div>' +
     '<p class="quote">А теперь иди за подарком.</p>' +
-    '<p>' + todo(CONFIG.giftPlace) + '</p>');
+    '<p>' + CONFIG.giftPlace + '</p>');
 });
 
 /* ---------- общие виды ---------- */
@@ -466,7 +535,8 @@ function choice(c) {
 
 function code(c) {
   h('<p class="eyebrow">' + c.eyebrow + '</p><h2>' + c.title + '</h2><p>' + c.text + '</p>' +
-    '<p>' + todo(c.clue) + '</p>' +
+    '<p>' + (c.hint ? c.clue : todo(c.clue)) + '</p>' +
+    (c.hint ? '<details class="hint"><summary>Нужна маленькая подсказка?</summary><p>' + c.hint + '</p></details>' : '') +
     '<div class="field"><label for="code">' + c.label + '</label>' +
     '<input type="text" id="code" autocomplete="off" autocapitalize="characters"></div>' +
     '<p class="msg" id="msg"></p>' +
@@ -589,8 +659,8 @@ function apozh() {
   }
   function allDone() { for (var i = 0; i < N; i++) if (!recs[i]) return false; return true; }
 
-  h('<p class="eyebrow">Глава 2</p><h2>Апож</h2>' +
-    '<p>Я спрятал одну нашу песню, перевернув её задом наперёд. Ты слушаешь её по кусочкам и повторяешь в микрофон всё, что слышишь, как можно точнее. Потом я переверну твои записи обратно, и ты попробуешь узнать песню.</p>' +
+  h('<p class="eyebrow">Глава 3</p><h2>Апож</h2>' +
+    '<p>Я спрятал песню, перевернув её задом наперёд. Ты слушаешь её по кусочкам и повторяешь в микрофон всё, что слышишь, как можно точнее. Потом я переверну твои записи обратно, и ты попробуешь узнать песню.</p>' +
     '<p class="soft">Включи звук на телефоне и разреши доступ к микрофону, когда браузер спросит.</p>' +
     '<p class="msg" id="msg"></p>' +
     '<button class="btn" id="go" type="button">Начать</button>');
@@ -648,7 +718,7 @@ function apozh() {
         '</div></div>';
     }
     var guess = flipped || micOff;
-    h('<p class="eyebrow">Глава 2 · апож</p><h2>' + (guess ? "Что это за песня?" : "Повтори, что слышишь") + '</h2>' +
+    h('<p class="eyebrow">Глава 3 · апож</p><h2>' + (guess ? "Что это за песня?" : "Повтори, что слышишь") + '</h2>' +
       (micOff ? '<p class="soft">Микрофон здесь недоступен, поэтому просто слушай перевёрнутую песню и угадывай.</p>' : "") +
       '<div class="row"><button class="btn ghost" type="button" data-a="all"' + (recIdx >= 0 ? " disabled" : "") + '>Послушать целиком задом наперёд</button></div>' +
       '<div class="az-tl" id="aztl">' + tl + '<i id="azfill"></i></div>' +
@@ -715,8 +785,8 @@ function apozh() {
   function win(guessed) {
     view.onclick = null;
     if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
-    h('<p class="eyebrow">Глава 2 · апож</p><h2>' + (guessed ? "Она самая" : "Вот что это было") + '</h2>' +
-      '<p>' + (guessed ? "Ты узнала её даже задом наперёд." : "Задом наперёд она сама на себя не похожа, так что это не считается.") + ' Послушай, как она звучит на самом деле.</p>' +
+    h('<p class="eyebrow">Глава 3 · апож</p><h2>' + (guessed ? "Она самая" : "Вот что это было") + '</h2>' +
+      '<p>' + (guessed ? "Ты узнала её даже задом наперёд." : "Задом наперёд она сама на себя не похожа, так что это не считается.") + ' Это «Около тебя», и её название — последний ключ к замку.</p>' +
       '<div class="row"><button class="btn ghost" id="orig" type="button">Включить оригинал</button></div>' +
       '<button class="btn" id="go" type="button">Дальше</button>');
     $("orig").onclick = function () { play(orig); };
@@ -728,7 +798,8 @@ function apozh() {
 /* ---------- каркас ---------- */
 function render() {
   if (state.step >= STEPS.length) state.step = STEPS.length - 1;
-  var s = STEPS[state.step];
+  var visibleStep = author && previewGate ? GATES[previewGate] : state.step;
+  var s = STEPS[visibleStep];
   view.onclick = null;
   s.fn();
   // третья глава не показывается в списке, пока не откроется: до этого история выглядит законченной
@@ -740,12 +811,22 @@ function render() {
     return '<span class="chip ' + cls + '">Глава ' + n + "</span>";
   }).join("");
   $("authorBox").innerHTML = author
-    ? '<div class="author"><span>Режим автора: главы открыты без ожидания. Шаг ' + (state.step + 1) + " из " + STEPS.length + '.</span>' +
+    ? '<div class="author"><span>Режим автора: главы открыты без ожидания. Шаг ' + (visibleStep + 1) + " из " + STEPS.length + '.</span>' +
       '<div class="row"><button class="btn ghost" id="aPrev" type="button">Назад</button>' +
       '<button class="btn ghost" id="aNext" type="button">Пропустить шаг</button>' +
-      '<button class="btn ghost" id="aReset" type="button">Сбросить прогресс</button></div></div>'
+      '<button class="btn ghost" id="aReset" type="button">Сбросить прогресс</button></div>' +
+      '<p>Предпросмотр экранов ожидания</p><div class="row">' +
+      '<button class="btn ghost" id="aWait1" type="button">До главы 1</button>' +
+      '<button class="btn ghost" id="aWait2" type="button">До главы 2</button>' +
+      '<button class="btn ghost" id="aFake" type="button">Ложный финал (до главы 3)</button>' +
+      (previewGate ? '<button class="btn ghost" id="aReturn" type="button">Вернуться к прохождению</button>' : '') + '</div></div>'
     : "";
   if (author) {
+    function preview(ch) { previewGate = ch; render(); window.scrollTo(0, 0); }
+    $("aWait1").onclick = function () { preview(1); };
+    $("aWait2").onclick = function () { preview(2); };
+    $("aFake").onclick = function () { preview(3); };
+    if (previewGate) $("aReturn").onclick = function () { preview(0); };
     $("aPrev").onclick = function () { go(Math.max(0, state.step - 1)); };
     $("aNext").onclick = function () { go(Math.min(STEPS.length - 1, state.step + 1)); };
     $("aReset").onclick = function () { go(0); };
@@ -758,13 +839,14 @@ $("mark").onclick = function () {
   taps++;
   clearTimeout(tapTimer);
   tapTimer = setTimeout(function () { taps = 0; }, 1500);
-  if (taps >= 5) { taps = 0; author = !author; render(); }
+  if (taps >= 5) { taps = 0; author = !author; previewGate = 0; render(); }
 };
 
 // экраны ожидания сами сменятся, когда придёт время
-var GATES = { 1: 0, 2: 6, 3: 10 };
+var GATES = { 1: 0, 2: STEPS.findIndex(function(s) { return s.ch === 2; }), 3: fakeEndStep };
 var wasOpen = {};
 setInterval(function () {
+  if (author && previewGate) return;
   var s = STEPS[state.step];
   if (state.step !== GATES[s.ch]) return;
   var now = isOpen(s.ch);
