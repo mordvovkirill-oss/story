@@ -399,6 +399,30 @@ step(1, function () {
     '<input type="text" id="date" inputmode="numeric" autocomplete="off" placeholder="ДД.ММ.ГГГГ"></div>' +
     '<p class="msg" id="msg"></p>' +
     '<button class="btn" id="go" type="button">Проверить</button>');
+  var dateField = $("date");
+  dateField.addEventListener("input", function () {
+    var pos = dateField.selectionStart;
+    var left = dateField.value.slice(0, pos).replace(/\D/g, "").length;
+    var digits = dateField.value.replace(/\D/g, "").slice(0, 8);
+    var formatted = digits.slice(0, 2) + (digits.length > 2 ? "." + digits.slice(2, 4) : "") + (digits.length > 4 ? "." + digits.slice(4) : "");
+    dateField.value = formatted;
+    var caret = 0, count = 0;
+    while (caret < formatted.length && count < left) {
+      if (/\d/.test(formatted.charAt(caret))) count++;
+      caret++;
+    }
+    dateField.setSelectionRange(caret, caret);
+  });
+  dateField.addEventListener("beforeinput", function (e) {
+    var p = dateField.selectionStart;
+    if (p !== dateField.selectionEnd || !e.cancelable) return;
+    if (e.inputType === "deleteContentBackward" && dateField.value.charAt(p - 1) === ".") {
+      dateField.setSelectionRange(p - 1, p);
+      dateField.setSelectionRange(p - 2, p);
+    } else if (e.inputType === "deleteContentForward" && dateField.value.charAt(p) === ".") {
+      dateField.setSelectionRange(p, p + 2);
+    }
+  });
   $("go").onclick = function () {
     var v = $("date").value.replace(/\D/g, "");
     if (CONFIG.firstMessage.indexOf(v) >= 0) next();
