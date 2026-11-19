@@ -153,20 +153,6 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--wine); outl
   background-size: 300% 300%;
   transition: left 0.16s ease, top 0.16s ease;
 }
-.tile span {
-  display: none;
-  position: absolute;
-  left: 6px; top: 6px;
-  min-width: 24px; height: 24px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 24px;
-  text-align: center;
-}
-.board.nums .tile span { display: block; }
 .photo { width: 100%; border-radius: 8px; display: block; }
 .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
@@ -295,11 +281,11 @@ footer { align-items: center; }
 var CONFIG = {
   // время открытия глав, по Москве
   open: {
-    1: Date.UTC(2026, 10, 20, 16, 0),  // 20 ноября 19:00 МСК
+    1: Date.UTC(2026, 10, 20, 9, 0),  // 20 ноября 12:00 МСК
     2: Date.UTC(2026, 10, 21, 9, 0),   // 21 ноября 12:00 МСК
     3: Date.UTC(2026, 10, 22, 16, 0)   // 22 ноября 19:00 МСК
   },
-  openText: { 1: "20 ноября в 19:00", 2: "21 ноября в 12:00", 3: "22 ноября в 19:00" },
+  openText: { 1: "20 ноября в 12:00", 2: "21 ноября в 12:00", 3: "22 ноября в 19:00" },
   photoCaption: "Я уже скучаю по тебе, Катя.",
   firstMessage: ["18072015", "180715"],
   clue1: "Там, где обычно рождается что-то вкусное, сегодня спряталось кое-что для тебя. Только искать нужно чуть ниже.",
@@ -599,7 +585,6 @@ function puzzle() {
     '<p class="soft">Нажимай на кусочек рядом с пустой клеткой, он переедет в неё.</p>' +
     '<div class="board" id="board"></div>' +
     '<div class="row"><span class="count" id="count">Ходов: 0</span>' +
-    '<button class="btn ghost" id="nums" type="button">Показать номера</button>' +
     '<button class="btn ghost" id="solve" type="button" hidden>Собрать за меня</button></div>');
 
   var board = $("board"), tiles = {};
@@ -608,7 +593,6 @@ function puzzle() {
     b.type = "button"; b.className = "tile";
     b.style.backgroundPosition = (t % N) * 50 + "% " + Math.floor(t / N) * 50 + "%";
     b.setAttribute("aria-label", "Кусочек " + (t + 1));
-    b.innerHTML = "<span>" + (t + 1) + "</span>";
     b.dataset.t = t;
     board.appendChild(b); tiles[t] = b;
   }
@@ -630,10 +614,6 @@ function puzzle() {
     place();
     if (moves >= 120 || Date.now() - started > 4 * 60 * 1000) $("solve").hidden = false;
     if (solved()) setTimeout(next, 450);
-  };
-  $("nums").onclick = function () {
-    var on = board.classList.toggle("nums");
-    this.textContent = on ? "Скрыть номера" : "Показать номера";
   };
   $("solve").onclick = next;
   if (author) $("solve").hidden = false;
